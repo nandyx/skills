@@ -72,6 +72,10 @@ if [[ "$MODE" == codebase ]]; then
   : > "$LINES"
   while IFS= read -r f; do [[ -f "$f" ]] && awk -v f="$f" '{ print f ":" NR ":" $0 }' "$f"; done < "$CODE" >> "$LINES"
   BASE_LABEL="**Mode:** codebase · **Scope:** $(printf '%s ' "${SCOPE[@]}" | sed 's/ $//')"
+  if [[ ! -s "$CODE" ]]; then
+    echo "Nothing to audit: no code files (${AUDIT_CODE_EXT}) under $(printf '%s ' "${SCOPE[@]}")minus the exclusions in .audit-code/config.env."
+    exit 0
+  fi
 else
   grep -E "\.($AUDIT_CODE_EXT)$" "$FILES" | grep -vE "$AUDIT_EXCLUDE" > "$CODE" || true
   "$SCRIPTS/changed-lines.sh" --base "$BASE" | grep -F -f <(sed 's/$/:/' "$CODE") > "$LINES" || true

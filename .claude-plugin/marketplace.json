@@ -1,0 +1,12 @@
+{
+  "name": "nandyx-skills",
+  "owner": { "name": "Nandi Legorreta", "url": "https://github.com/nandyx" },
+  "metadata": { "description": "Agent skills by Nandi Legorreta" },
+  "plugins": [
+    {
+      "name": "audit-code",
+      "source": "./",
+      "description": "Refactor audit with proof for JS/TS projects: every row in the plan survived an executed counter-check."
+    }
+  ]
+}

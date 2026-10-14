@@ -1,0 +1,11 @@
+{
+  "name": "audit-code",
+  "version": "1.0.0",
+  "description": "Refactor audit with proof for JS/TS projects: sweeps, one reviewer per lens, one adversarial verifier that runs a counter-check behind every finding.",
+  "author": { "name": "Nandi Legorreta", "url": "https://github.com/nandyx" },
+  "homepage": "https://github.com/nandyx/skills",
+  "repository": "https://github.com/nandyx/skills",
+  "license": "MIT",
+  "keywords": ["code-quality", "refactor", "audit", "code-review", "typescript", "javascript"],
+  "skills": ["./skills/audit-code"]
+}

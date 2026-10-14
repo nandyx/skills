@@ -32,7 +32,7 @@ A skipped sweep is not a failure, it is a fact the header carries with its reaso
    npx --yes madge --circular --basedir . --extensions ts,tsx,js,jsx <dirs in scope>
    ```
 
-4. **Lint warnings on added lines** (`A`, lines). The project's own eslint (`npx --no-install eslint --format json`, run from the nearest directory with an eslint config) intersected with the added lines. Every warning on a line the branch wrote is a candidate; the verifier still runs `git show <base>:<path>` before blaming it, because moved code carries its warnings with it. Skipped when eslint is not installed in the project.
+4. **Lint warnings on added lines** (`A`, lines). The project's own eslint (`npx --no-install eslint --format json`, run from the nearest directory with an eslint config) intersected with the added lines. Every warning on a line the branch wrote is a candidate; the verifier still runs `git show <base>:<path>` before blaming it, because moved code carries its warnings with it. Skipped, with the reason in the header, when the project has no eslint config or `node_modules/.bin/eslint` is missing (projects on oxlint, biome or `vp lint` fall here).
 
 5. **Alias-able import** (`A`, lines). `../../` or deeper when the alias registry of `rules-pack.md` has an entry that resolves to the same file. Runs only when some `tsconfig` declares `paths`; the change is the import line alone.
 

@@ -138,7 +138,9 @@ skip() { plan_skip+=("$1 ($2)"); }
 want "1 type safety"
 if [[ $has_npx == yes ]] && (( n_files > 1 )); then want "2 duplication"; else skip 2 "npx missing or single file"; fi
 if [[ $has_npx == yes ]] && (( n_files > 0 )); then want "3 import cycles"; else skip 3 "npx missing or no files"; fi
-if [[ $has_npx == yes ]] && (( n_files > 0 )); then want "4 lint warnings"; else skip 4 "npx missing or no files"; fi
+has_eslint=no
+if [[ -x node_modules/.bin/eslint ]] && [[ -n "$(find . -maxdepth 3 \( -name 'eslint.config.*' -o -name '.eslintrc*' \) -not -path '*/node_modules/*' 2>/dev/null | head -1)" ]]; then has_eslint=yes; fi
+if [[ $has_npx == yes && $has_eslint == yes ]] && (( n_files > 0 )); then want "4 lint warnings"; else skip 4 "eslint not installed or no config"; fi
 if (( ${ALIASES:-0} > 0 )); then want "5 alias-able import"; else skip 5 "no tsconfig paths"; fi
 if [[ -n "${DS_CANONICAL:-}${FORBIDDEN:-}" ]]; then want "6 DS bypass / forbidden"; else skip 6 "no DS_CANONICAL/FORBIDDEN in rules-pack.env"; fi
 if (( n_ui > 0 )); then want "7 memo without consumer"; want "8 several components per file"; else skip 7 "no UI files"; skip 8 "no UI files"; fi

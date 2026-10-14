@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.0.1 — 2026-10-14
+
+First two runs on public repos, written up in `docs/runs/`: excalidraw (React/TS, 34 files, 90 candidates → 7 survive) and nestjs/nest (Node/TS, 15 files, 31 candidates → 1 survives). What they changed:
+
+- Sweep 1 skips comment lines (five JSDoc sentences had matched `as any` / `!` on nest).
+- Sweep 4 skips with a reason when the project has no eslint config or binary (nest lints with oxlint).
+- `audit-summary.sh` counts by the verdict column, not by the id's shape (a verifier wrote `OS-1 [structure]`).
+- Reviewers may read a file over 1 500 lines by diff hunks with context, and must say so in the hand-back (`App.tsx`, 11 446 lines).
+- Verifier: a compiler found outside the repo may be used read-only and must be named in Verified facts.
+
 ## 1.0.0 — 2026-10-14
 
 First public release of `audit-code`, extracted from a private delivery harness after two measured runs.

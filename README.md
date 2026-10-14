@@ -134,10 +134,17 @@ The others are language-agnostic because they are prompts: nothing runs, so noth
 
 ## Numbers
 
-Every number here comes from a run you can reproduce.
+Every number here comes from a run you can reproduce. Full write-ups in [`docs/runs/`](./docs/runs/).
 
-- **Fixture** (`tests/smoke.sh`, 5 code files, 25 added lines, 7 planted issues): 14 of 15 sweeps run, 12 candidates, 2 marked pre-existing, 1 skipped sweep with its reason, in under a minute without agents. Verdicts: 4 survive, 4 discarded, 4 out of scope ([report](./skills/audit-code/references/example-report.md)).
-- **Two internal runs** on a React/React Native monorepo (7 and 24 code files; 2 and 103 added lines): 2 and 18 candidates, **0 survivors** both times, ~20 rows correctly discarded as pre-existing debt, gate under 3 minutes wall-clock with three reviewers and the verifier on a small model. Zero survivors on a disciplined repo is the honest result; the numbers from public repos will be added here as they are run.
+| run | delta | sweeps | candidates | survive | discarded | out of scope | reviewers | verifier |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| [excalidraw](./docs/runs/2026-10-14-excalidraw.md) · React/TS, last 8 commits | 34 files · 2 726 lines | 7/10 in 14 s | 90 (40 pre-existing) | **7** | 73 | 10 | 3 agents · 5 min 30 s | 9 min 07 s |
+| [nestjs/nest](./docs/runs/2026-10-14-nest.md) · Node/TS, last 25 commits | 15 files · 293 lines | 3/10 in 4 s | 31 (10 pre-existing) | **1** | 26 | 4 | 2 agents · 5 min 59 s | 6 min 03 s |
+| [fixture](./skills/audit-code/references/example-report.md) · `tests/smoke.sh` | 5 files · 25 lines | 14/15 | 12 (2 pre-existing) | 4 | 4 | 4 | none | hand-verified |
+
+What survived is what the README promises: dead exports after a refactor, a duplicated 11-line block, a cast the code already proves, a parameter type four call sites narrow. What was discarded is the reason the verifier exists: 58 rows of debt the branch only touched, 20 of moved code, 6 «convention» claims the repo contradicts, 5 regex hits inside JSDoc prose (fixed in 1.0.1). Agents ran on Claude Sonnet, 80K–213K tokens per reviewer and 100K–172K per verifier.
+
+Two internal runs on a React/React Native monorepo before publishing (7 and 24 files) had 0 survivors each, with ~20 rows correctly discarded as pre-existing: zero survivors on a disciplined repo is the honest result.
 
 ## Project files
 
@@ -156,7 +163,7 @@ tests/smoke.sh              # builds a fixture, runs both modes, asserts the pla
 python3 tests/validate-skill.py
 ```
 
-CI runs both plus `shellcheck` on every push.
+CI runs both plus `shellcheck` on every push. Runs on public repos are written up in `docs/runs/`.
 
 ## License
 

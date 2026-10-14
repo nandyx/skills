@@ -196,7 +196,7 @@ MOVED='`git show <base>:<path>` — moved code carries its debt'
 in_plan() { printf '%s\n' "${plan_run[@]}" | grep -q "^$1 "; }
 
 # S1 type safety on added lines
-grep -En ":[[:space:]]*any\b|\bas any\b|as unknown as|\bas [A-Z]\w*|[]A-Za-z_)]![[:space:]]*[.;),]|@ts-(ignore|expect-error)" "$LINES" | cut -d: -f2- \
+grep -En ":[[:space:]]*any\b|\bas any\b|as unknown as|\bas [A-Z]\w*|[]A-Za-z_)]![[:space:]]*[.;),]|@ts-(ignore|expect-error)" "$LINES" | cut -d: -f2- | grep -vE "^[^:]+:[0-9]+:[[:space:]]*(//|/?\*)" \
   | row S1 A "type safety" "Stub or wrapper with a looser signature — read the real \`.d.ts\`; a cast hiding a real mismatch → out of scope" "narrow to the type the code already proves"; ran_sweep
 # S2 duplication between files in scope (jscpd, JSON report, clones with both files in scope)
 if in_plan 2; then

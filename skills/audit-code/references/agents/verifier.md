@@ -30,7 +30,7 @@ For each row, in order:
 
 A candidate whose counter-check cannot be run as written (a command that needs a server, a path that does not exist, a check that would take longer than the audit) is `discarded — not verifiable: <why>`. Nobody promotes it by hand.
 
-Every command runs in the foreground, bounded: `<skill>/scripts/with-timeout.sh <seconds> <command…>`. Nothing is installed, nothing is started, nothing is written to the tree.
+Every command runs in the foreground, bounded: `<skill>/scripts/with-timeout.sh <seconds> <command…>`. Nothing is installed, nothing is started, nothing is written to the tree. A compiler or linter found outside the repo (another project's `node_modules`, a global install) may be used read-only for an in-memory check, and every such use is named in **Verified facts** with its path and version.
 
 ## Step 3 — Write the verdicts
 

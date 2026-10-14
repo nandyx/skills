@@ -23,7 +23,7 @@ The prompt carries, in one line:
 
 ## Step 2 — Review every file
 
-Read each file in the list in full — no sampling, no «the first ten look fine». For every lens item, note each hit with its line. For each hit decide, with the file open:
+Read each file in the list in full — no sampling, no «the first ten look fine». One exception, in branch mode only: a file over 1 500 lines is read through every hunk of `git diff <base> -- <path>` with at least 40 lines of context on each side, plus the whole of any function a hunk touches. Name every file you read that way in the hand-back (measured on excalidraw: `App.tsx` has 11 446 lines; two reviewers read it by hunks and said so). For every lens item, note each hit with its line. For each hit decide, with the file open:
 
 - Is it already in the register? Drop it.
 - Is the rule explicit in the pack or the lens? If neither names it, drop it: a preference is not a candidate.
@@ -39,7 +39,7 @@ Write `out` with exactly these sections:
 ```markdown
 # candidates — <lens>
 
-**Files read:** <n> of <n> · **Mode:** <branch sha | codebase>
+**Files read:** <n> of <n> (<k> by diff hunks: <paths>) · **Mode:** <branch sha | codebase>
 
 ## Candidates
 | id | lens | class | files | change | rule violated | proposed counter-check |
@@ -62,7 +62,7 @@ Return one line: lens, files read, candidates, out-of-scope rows.
 
 - **Read-only.** No edits, no writes outside `out`, no command that changes the tree, no server, no install.
 - **Candidates, not findings.** Never write «finding», «violation confirmed» or «must». The verifier certifies; you propose.
-- **Every file, whole.** A 15-file delta reviewed by skimming once let a file with three components through, and a human found it.
+- **Every file, whole** — or by hunks with context when it is over 1 500 lines, declared. A 15-file delta reviewed by skimming once let a file with three components through, and a human found it.
 - **Cite the rule.** Document and section for every candidate (`CLAUDE.md § Components`, `lenses/structure.md § 3`). A candidate with «n/a» as its rule is dropped before writing.
 - **The register wins.** When a candidate would touch something a spec declares public or a decision settles, it is not written, not even as «already planned» — the lead keeps that list from the register itself.
 - **Zero behaviour, zero visual delta.** Lifecycle, rendered values, public signatures and computed CSS stay the same or the row goes to Out of scope.

@@ -14,7 +14,7 @@ A skipped sweep is not a failure, it is a fact the header carries with its reaso
 
 ## Generic sweeps
 
-1. **Type safety** (`A`, lines). `: any`, `as any`, `as unknown as`, a cast `as SomeType`, a non-null assertion (`x!.`, `x!;`, `x!)`), `@ts-ignore` / `@ts-expect-error`. Class `A` when the fix is a type the code already proves (`satisfies`, a narrowed guard, the real return type); a cast that hides a real mismatch is a behaviour question and goes to `Out of scope` — the `types-and-state` lens decides per hit.
+1. **Type safety** (`A`, lines). `: any`, `as any`, `as unknown as`, a cast `as SomeType`, a non-null assertion (`x!.`, `x!;`, `x!)`), `@ts-ignore` / `@ts-expect-error`; comment lines are excluded (measured: five JSDoc sentences matched on nestjs/nest). Class `A` when the fix is a type the code already proves (`satisfies`, a narrowed guard, the real return type); a cast that hides a real mismatch is a behaviour question and goes to `Out of scope` — the `types-and-state` lens decides per hit.
 
    ```bash
    grep -En ":[[:space:]]*any\b|\bas any\b|as unknown as|\bas [A-Z]\w*|[]A-Za-z_)]![[:space:]]*[.;),]|@ts-(ignore|expect-error)" added_lines.txt

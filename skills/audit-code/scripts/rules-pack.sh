@@ -21,6 +21,8 @@ docs=$( {
   for d in CLAUDE.md AGENTS.md .github/copilot-instructions.md; do [[ -f "$d" ]] && echo "$d"; done
   ls .cursor/rules/*.md .cursor/rules/*.mdc 2>/dev/null
   for d in CLAUDE.md AGENTS.md; do [[ -f "$d" ]] && grep -oE '(docs|doc|\.github|\.claude|\.cursor)/[A-Za-z0-9_./-]+\.mdc?' "$d"; done
+  for d in CLAUDE.md AGENTS.md CONTRIBUTING.md .github/CONTRIBUTING.md; do [[ -f "$d" ]] && grep -oE '\]\(\.?/?[A-Za-z0-9_./-]+\.md\)' "$d" | sed -E 's/^\]\(\.?\/?//; s/\)$//'; done
+  for d in CONTRIBUTING.md .github/CONTRIBUTING.md; do [[ -f "$d" ]] && grep -qiE 'agent|AI[- ]assisted|LLM' "$d" && echo "$d"; done
   [[ -f .audit-code/rules.md ]] && grep -oE '^[-*] *`?[A-Za-z0-9_./-]+\.mdc?' .audit-code/rules.md | sed -E 's/^[-*] *`?//'
 } | sort -u | while read -r d; do [[ -f "$d" ]] && echo "$d"; done )
 nested=$(find . -mindepth 2 -maxdepth 5 \( -name AGENTS.md -o -name CLAUDE.md \) "${prune[@]}" -not -path '*/examples/*' -not -path '*/test/*' -not -path '*/tests/*' -not -path '*/fixtures/*' 2>/dev/null | sed 's#^\./##' | sort)

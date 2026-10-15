@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.4 — 2026-10-14
+
+From the TanStack Query run:
+
+- Duplication rows point at the clone's first added line. A clone that started on an old line was marked `pre-existing on base` and discarded on sight although the branch had written part of it (five rows).
+- Memo sweep skips comment lines (`// This useMemo is for performance…` matched).
+- Rules pack follows relative Markdown links from `CLAUDE.md` / `AGENTS.md` / `CONTRIBUTING.md` (`[CONTRIBUTING.md](./CONTRIBUTING.md)` was missed), and lists a `CONTRIBUTING.md` that speaks to AI or agent contributions.
+
 ## 1.0.3 — 2026-10-14
 
 Fourth public run: next.js (33 files, 26 candidates → 1 survivor, class C, `Apply: no — public via deep import`; no PR).

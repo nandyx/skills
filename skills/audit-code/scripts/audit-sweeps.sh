@@ -213,15 +213,20 @@ for l in open(sys.argv[4]):
     parts = l.split(":", 2)
     if len(parts) >= 2 and parts[1].isdigit(): added.add((parts[0], int(parts[1])))
 branch = sys.argv[5] == "branch"
-def touches(name, start, n):
-    return any((name, i) in added for i in range(start, start + max(n, 1)))
+def first_added(name, start, n):
+    return next((i for i in range(start, start + max(n, 1)) if (name, i) in added), None)
 for c in d.get("duplicates", []):
     a, b = c["firstFile"], c["secondFile"]
     an, bn = a["name"].replace(root, ""), b["name"].replace(root, "")
     if an not in code or bn not in code: continue
     n = c.get("lines", 0) or 0
-    if branch and not (touches(an, a["start"], n) or touches(bn, b["start"], n)): continue
-    print(f"{an}:{a['start']}:clone of {n or '?'} lines with {bn}:{b['start']}")
+    if not branch:
+        print(f"{an}:{a['start']}:clone of {n or '?'} lines with {bn}:{b['start']}"); continue
+    la, lb = first_added(an, a["start"], n), first_added(bn, b["start"], n)
+    if la is not None:
+        print(f"{an}:{la}:clone of {n or '?'} lines ({an}:{a['start']}) with {bn}:{b['start']}")
+    elif lb is not None:
+        print(f"{bn}:{lb}:clone of {n or '?'} lines ({bn}:{b['start']}) with {an}:{a['start']}")
 PY
   ran_sweep
 fi
@@ -277,7 +282,7 @@ if in_plan 6; then
 fi
 # S7 useMemo / useCallback without an identity consumer
 if in_plan 7; then
-  each_ui_file grep -EHn "\b(useMemo|useCallback)\b" | grep -vE ":[[:space:]]*import " | row S7 A "memo without consumer" "\"Simplify to the canonical equivalent\" — grep the memoised name in its consumers for an identity dependency" "drop the memo when nothing depends on identity"; ran_sweep
+  each_ui_file grep -EHn "\b(useMemo|useCallback)\b" | grep -vE ":[0-9]+:[[:space:]]*(import |//|/?\*)" | row S7 A "memo without consumer" "\"Simplify to the canonical equivalent\" — grep the memoised name in its consumers for an identity dependency" "drop the memo when nothing depends on identity"; ran_sweep
 fi
 # S8 several components in one UI file
 if in_plan 8; then

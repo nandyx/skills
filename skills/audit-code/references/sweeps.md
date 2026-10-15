@@ -20,7 +20,7 @@ A skipped sweep is not a failure, it is a fact the header carries with its reaso
    grep -En ":[[:space:]]*any\b|\bas any\b|as unknown as|\bas [A-Z]\w*|[]A-Za-z_)]![[:space:]]*[.;),]|@ts-(ignore|expect-error)" added_lines.txt
    ```
 
-2. **Duplication** (`B`, files). Identical blocks of 4+ lines across two or more files in scope, via `jscpd` ad hoc through `npx` — never added to a manifest. Only clones whose **both** files are in scope become rows, and in branch mode only when at least one of the two blocks contains an added line (measured on tailwindcss: 114 clones between big files on the base, none touched by the branch). Counter-check: «Duplication» — `diff` the two blocks; nearly identical ≠ identical.
+2. **Duplication** (`B`, files). Identical blocks of 4+ lines across two or more files in scope, via `jscpd` ad hoc through `npx` — never added to a manifest. Only clones whose **both** files are in scope become rows, and in branch mode only when at least one of the two blocks contains an added line (measured on tailwindcss: 114 clones between big files on the base, none touched by the branch). The row points at the clone's first **added** line, so a clone that starts on an old line is not mislabelled `pre-existing` (measured on TanStack Query: five clones lost that way). Counter-check: «Duplication» — `diff` the two blocks; nearly identical ≠ identical.
 
    ```bash
    npx --yes jscpd --min-lines 4 --min-tokens 40 --reporters json --format "typescript,tsx,javascript,jsx" <dirs in scope>
@@ -42,7 +42,7 @@ A skipped sweep is not a failure, it is a fact the header carries with its reaso
 
 6. **Design-system wrapper bypass and forbidden imports** (`A`, lines). An import from the canonical DS package when the project mandates a wrapper, and any import from the forbidden list. Both come from `rules-pack.env` (`DS_CANONICAL`, `DS_WRAPPER`, `FORBIDDEN`, `DS_EXEMPT`); when the pack names nothing the sweep is skipped, never guessed. Wrapper bypass is `A` (swap the specifier; the counter-check proves the wrapper re-exports the symbol). A forbidden library is `Apply: no`: replacing it is a migration, not a refactor.
 
-7. **Memo without a consumer** (`A`, UI files). Every `useMemo` / `useCallback` must name the consumer that depends on the value's identity: an effect dependency, a memoised child, a context value. The sweep lists them (import lines excluded); the lens greps the memoised name in its consumers and keeps only the ones nothing depends on.
+7. **Memo without a consumer** (`A`, UI files). Every `useMemo` / `useCallback` must name the consumer that depends on the value's identity: an effect dependency, a memoised child, a context value. The sweep lists them (import and comment lines excluded); the lens greps the memoised name in its consumers and keeps only the ones nothing depends on.
 
 8. **Several components in one file** (`B`, UI files). More than two top-level component declarations (`function Foo(`, `const Foo = (`) in one UI file. The row is `whole file`; the lens reads it, because a second component close to the parent's size is a hit and a five-line private helper is not.
 

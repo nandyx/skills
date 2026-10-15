@@ -5,7 +5,7 @@ license: MIT
 compatibility: Requires git, bash, python3 and Node 18+ (npx runs jscpd and madge ad hoc). Sub-agents are used when the runtime has them; an inline fallback is documented.
 metadata:
   author: Nandi Legorreta
-  version: "1.0.5"
+  version: "1.0.6"
   repository: https://github.com/nandyx/skills
 ---
 

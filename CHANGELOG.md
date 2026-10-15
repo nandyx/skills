@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.6 — 2026-10-14
+
+From the react-hook-form codebase run (211 candidates → 32 survivors, draft PR react-hook-form/react-hook-form#13871):
+
+- Verifier: when a row needs the compiler («the code already proves the type», a narrowed type, a deleted export), it makes a scratch copy outside the tree, records the baseline type-check, applies the row alone, re-runs and restores. A row survives only with the baseline's diagnostics.
+
 ## 1.0.5 — 2026-10-14
 
 First codebase-mode run with agents (react-hook-form `src/`, 112 files):

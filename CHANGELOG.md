@@ -9,6 +9,7 @@ First two runs on public repos, written up in `docs/runs/` (the three class `A` 
 - `audit-summary.sh` counts by the verdict column, not by the id's shape (a verifier wrote `OS-1 [structure]`).
 - Reviewers may read a file over 1 500 lines by diff hunks with context, and must say so in the hand-back (`App.tsx`, 11 446 lines).
 - Verifier: a compiler found outside the repo may be used read-only and must be named in Verified facts.
+- Duplication sweep keeps only clones that touch an added line in branch mode (tailwindcss: 114 base-only clones → 0). Third public run: tailwindcss, 7 candidates → 0 survive.
 
 ## 1.0.0 — 2026-10-14
 

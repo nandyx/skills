@@ -7,7 +7,7 @@ No candidate is reported without its counter-check. The first pass of an audit f
 | Kind of finding | Mandatory counter-check |
 | --- | --- |
 | Unused dependency | `peerDependencies` of every installed package (no `peerDependenciesMeta` = mandatory), root and workspace scripts, configs (bundler, jest, eslint, babel, storybook), README |
-| Export with no consumer | grep the **symbol**, not the import; and if a doc or spec declares it public, it is API, not dead code |
+| Export with no consumer | grep the **symbol**, not the import; if a doc or spec declares it public, it is API, not dead code; and in a **published package** read `package.json` `exports`: a wildcard (`"./*"`) or a path that reaches the file makes the symbol reachable by deep import, so it is public surface and the row is `Apply: no — public via deep import` |
 | Stub or wrapper with a "looser" signature | read upstream's real `.d.ts` before claiming it diverges |
 | "Does not follow the convention" | `find` the pattern across the whole repo before calling it a violation; thirty precedents make the pattern the convention |
 | Two docs state the rule differently | grep the rule across every normative doc the pack lists; report the contradiction itself as a docs finding and ask which one wins — never pick one silently |
@@ -83,6 +83,16 @@ grep -rn "\bIS_ANDROID\b" --include="*.ts" --include="*.tsx" --include="*.md" sr
 **Result.** Both appear in the project's specs as declared deliverables of work already shipped: the platform trio is deliberate surface, and the buffer is part of a token contract promoted into the package on purpose. Deleting either contradicts a closed decision.
 
 **Rule.** Grep the symbol across `docs/` as well as code. Surface a spec promised is API, not dead code. If it genuinely should go, that is a spec amendment, not a cleanup.
+
+**Candidate C** (nestjs/nest, 2026-10-14). After a refactor, `CONTROLLER_ID_KEY` and the public method `Module.assignControllerUniqueId` have no reader left in the repo. Delete both.
+
+```bash
+python3 -c "import json; print(json.load(open('packages/core/package.json'))['exports'])"
+```
+
+**Result.** `{"./*": "./*.js", ...}` — every module of `@nestjs/core` is importable by path (`@nestjs/core/injector/constants`), and the property the method defines is visible on every controller class at runtime. No consumer inside the repo says nothing about consumers outside it. The verifier of that run passed the row as class `A`; the lead caught it before opening a PR.
+
+**Rule.** In a published package, the `exports` map decides what is public, not the barrel. A wildcard makes everything public.
 
 ---
 

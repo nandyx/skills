@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.2 — 2026-10-14
+
+- Counter-check «Export with no consumer» reads the package's `exports` map: a wildcard or a path reaching the file makes the symbol public by deep import (`Apply: no`). Found on nestjs/nest, where the run's only survivor deleted such an export; withdrawn before a PR.
+
 ## 1.0.1 — 2026-10-14
 
 First two runs on public repos, written up in `docs/runs/` (the three class `A` rows from excalidraw became upstream draft PR excalidraw/excalidraw#12298): excalidraw (React/TS, 34 files, 90 candidates → 7 survive) and nestjs/nest (Node/TS, 15 files, 31 candidates → 1 survives). What they changed:

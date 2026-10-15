@@ -2,7 +2,7 @@
 
 ## 1.0.1 — 2026-10-14
 
-First two runs on public repos, written up in `docs/runs/`: excalidraw (React/TS, 34 files, 90 candidates → 7 survive) and nestjs/nest (Node/TS, 15 files, 31 candidates → 1 survives). What they changed:
+First two runs on public repos, written up in `docs/runs/` (the three class `A` rows from excalidraw became upstream draft PR excalidraw/excalidraw#12298): excalidraw (React/TS, 34 files, 90 candidates → 7 survive) and nestjs/nest (Node/TS, 15 files, 31 candidates → 1 survives). What they changed:
 
 - Sweep 1 skips comment lines (five JSDoc sentences had matched `as any` / `!` on nest).
 - Sweep 4 skips with a reason when the project has no eslint config or binary (nest lints with oxlint).

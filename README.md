@@ -142,7 +142,7 @@ Every number here comes from a run you can reproduce. Full write-ups in [`docs/r
 | [nestjs/nest](./docs/runs/2026-10-14-nest.md) · Node/TS, last 25 commits | 15 files · 293 lines | 3/10 in 4 s | 31 (10 pre-existing) | **1** | 26 | 4 | 2 agents · 5 min 59 s | 6 min 03 s |
 | [fixture](./skills/audit-code/references/example-report.md) · `tests/smoke.sh` | 5 files · 25 lines | 14/15 | 12 (2 pre-existing) | 4 | 4 | 4 | none | hand-verified |
 
-What survived is what the README promises: dead exports after a refactor, a duplicated 11-line block, a cast the code already proves, a parameter type four call sites narrow. What was discarded is the reason the verifier exists: 58 rows of debt the branch only touched, 20 of moved code, 6 «convention» claims the repo contradicts, 5 regex hits inside JSDoc prose (fixed in 1.0.1). Agents ran on Claude Sonnet, 80K–213K tokens per reviewer and 100K–172K per verifier.
+The three mechanical rows from excalidraw are a [draft PR upstream](https://github.com/excalidraw/excalidraw/pull/12298), one commit each, type-check and tests green. What survived is what the README promises: dead exports after a refactor, a duplicated 11-line block, a cast the code already proves, a parameter type four call sites narrow. What was discarded is the reason the verifier exists: 58 rows of debt the branch only touched, 20 of moved code, 6 «convention» claims the repo contradicts, 5 regex hits inside JSDoc prose (fixed in 1.0.1). Agents ran on Claude Sonnet, 80K–213K tokens per reviewer and 100K–172K per verifier.
 
 Two internal runs on a React/React Native monorepo before publishing (7 and 24 files) had 0 survivors each, with ~20 rows correctly discarded as pre-existing: zero survivors on a disciplined repo is the honest result.
 

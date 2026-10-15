@@ -23,6 +23,8 @@ Sweep rows marked `pre-existing on base`: 40 of 71.
 
 ## Survivors
 
+The three class `A` rows (ST-1, TS-4, TS-6) were applied as one commit each and opened as a draft PR upstream: https://github.com/excalidraw/excalidraw/pull/12298 (`yarn test:typecheck` 0 errors; selection, crop and frame test files pass, 113 tests). The four class `B` rows were not proposed: they move code inside a refactor that landed days earlier, and that call belongs to the maintainers.
+
 | id | class | files | change | evidence |
 | --- | --- | --- | --- | --- |
 | S2-7 | B | `packages/element/src/frame.ts:951` | extract the identical block once; nearly identical ≠ identical — `clone of 11 lines with packages/element/src/frame.ts:985` | `diff <(sed -n 951,961p packages/element/src/frame.ts) <(sed -n 985,995p packages/element/src/frame.ts)` → only the opening line and one blank line differ; the body (`isElementInFrame(...{ targetFrame: frame, checkedGroups })`, `for (groupId of element.groupIds) checkedGroups?.set(groupId, shouldCli… |

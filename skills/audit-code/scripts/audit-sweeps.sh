@@ -203,16 +203,25 @@ if in_plan 2; then
   dirs=$(sed -E 's#/[^/]+$##' "$CODE" | sort -u | tr '\n' ' ')
   rm -rf "$OUT/jscpd"
   "$WT" 180 npx --yes jscpd --min-lines 4 --min-tokens 40 --reporters json --output "$OUT/jscpd" --silent --absolute --format "typescript,tsx,javascript,jsx" $dirs >/dev/null 2>&1
-  python3 - "$OUT/jscpd/jscpd-report.json" "$CODE" "$PWD" <<'PY' 2>/dev/null | row S2 B "duplication" "Duplication — \`diff\` the two blocks, enumerate the differing lines" "extract the identical block once; nearly identical ≠ identical"
+  python3 - "$OUT/jscpd/jscpd-report.json" "$CODE" "$PWD" "$LINES" "$MODE" <<'PY' 2>/dev/null | row S2 B "duplication" "Duplication — \`diff\` the two blocks, enumerate the differing lines" "extract the identical block once; nearly identical ≠ identical"
 import json, sys
 try: d = json.load(open(sys.argv[1]))
 except Exception: sys.exit(0)
 code = set(l.strip() for l in open(sys.argv[2]) if l.strip()); root = sys.argv[3].rstrip("/") + "/"
+added = set()
+for l in open(sys.argv[4]):
+    parts = l.split(":", 2)
+    if len(parts) >= 2 and parts[1].isdigit(): added.add((parts[0], int(parts[1])))
+branch = sys.argv[5] == "branch"
+def touches(name, start, n):
+    return any((name, i) in added for i in range(start, start + max(n, 1)))
 for c in d.get("duplicates", []):
     a, b = c["firstFile"], c["secondFile"]
     an, bn = a["name"].replace(root, ""), b["name"].replace(root, "")
-    if an in code and bn in code:
-        print(f"{an}:{a['start']}:clone of {c.get('lines', '?')} lines with {bn}:{b['start']}")
+    if an not in code or bn not in code: continue
+    n = c.get("lines", 0) or 0
+    if branch and not (touches(an, a["start"], n) or touches(bn, b["start"], n)): continue
+    print(f"{an}:{a['start']}:clone of {n or '?'} lines with {bn}:{b['start']}")
 PY
   ran_sweep
 fi

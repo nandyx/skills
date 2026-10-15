@@ -20,7 +20,7 @@ A skipped sweep is not a failure, it is a fact the header carries with its reaso
    grep -En ":[[:space:]]*any\b|\bas any\b|as unknown as|\bas [A-Z]\w*|[]A-Za-z_)]![[:space:]]*[.;),]|@ts-(ignore|expect-error)" added_lines.txt
    ```
 
-2. **Duplication** (`B`, files). Identical blocks of 4+ lines across two or more files in scope, via `jscpd` ad hoc through `npx` — never added to a manifest. Only clones whose **both** files are in scope become rows. Counter-check: «Duplication» — `diff` the two blocks; nearly identical ≠ identical.
+2. **Duplication** (`B`, files). Identical blocks of 4+ lines across two or more files in scope, via `jscpd` ad hoc through `npx` — never added to a manifest. Only clones whose **both** files are in scope become rows, and in branch mode only when at least one of the two blocks contains an added line (measured on tailwindcss: 114 clones between big files on the base, none touched by the branch). Counter-check: «Duplication» — `diff` the two blocks; nearly identical ≠ identical.
 
    ```bash
    npx --yes jscpd --min-lines 4 --min-tokens 40 --reporters json --format "typescript,tsx,javascript,jsx" <dirs in scope>

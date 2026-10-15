@@ -5,7 +5,7 @@ license: MIT
 compatibility: Requires git, bash, python3 and Node 18+ (npx runs jscpd and madge ad hoc). Sub-agents are used when the runtime has them; an inline fallback is documented.
 metadata:
   author: Nandi Legorreta
-  version: "1.0.4"
+  version: "1.0.5"
   repository: https://github.com/nandyx/skills
 ---
 
@@ -76,7 +76,7 @@ files: 11 · added lines: 340 · surface: ui · lenses: structure, types-and-sta
 Sweeps: 14/15 · candidates: 23 · skipped: 6 (no DS_CANONICAL/FORBIDDEN in rules-pack.env)
 ```
 
-A skipped sweep is a fact the header carries with its reason, never a failure to hide. `surface: backend` means no UI file is in scope: sweeps 7–10 skip and two lenses run instead of three. In codebase mode over the file cap (60 by default) the script writes `chunks/<n>.txt` by top-level folder and prints `chunks: n`.
+A skipped sweep is a fact the header carries with its reason, never a failure to hide. `surface: backend` means no UI file is in scope: sweeps 7–10 skip and two lenses run instead of three. In codebase mode over the file cap (60 by default) the script writes balanced `chunks/<n>.txt` that keep folders together and prints `chunks: n`.
 
 If it prints `Nothing to audit`, stop and relay its two suggestions (`--base`, `--scope`).
 
@@ -90,7 +90,7 @@ Dispatch one reviewer per lens the header lists, **all in one message so they ru
 skill: <skill dir> · lens: structure · files: /tmp/audit-code/code_files.txt · rules: /tmp/audit-code/rules-pack.md · register: /tmp/audit-code/register.md · mode: branch <sha> | codebase · out: /tmp/audit-code/candidates.structure.md
 ```
 
-Same for `types-and-state` and, when `surface: ui`, `styling-and-i18n`. With chunks, one round per chunk (`files:` is the chunk file). Each reviewer reads its lens from `references/lenses/<lens>.md`, every file in full, and returns candidates in the fixed shape plus its `## Out of scope — behaviour` rows and `## Skipped lens items`. When they return, append their tables to `candidates.md`.
+Same for `types-and-state` and, when `surface: ui`, `styling-and-i18n` with `files: /tmp/audit-code/ui_files.txt` (it only reads UI files). With chunks, `structure` and `types-and-state` run once per chunk (`files:` is the chunk file, `out:` carries the chunk number) and `styling-and-i18n` runs once over `ui_files.txt`, all in one message. Each reviewer reads its lens from `references/lenses/<lens>.md`, every file in full, and returns candidates in the fixed shape plus its `## Out of scope — behaviour` rows and `## Skipped lens items`. When they return, append their tables to `candidates.md`.
 
 How to dispatch depends on the runtime:
 

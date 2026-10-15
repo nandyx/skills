@@ -27,7 +27,7 @@ AUDIT_REVIEWER_LINES=300
 AUDIT_CODEBASE_MAX_FILES=60
 AUDIT_CODE_EXT='ts|tsx|js|jsx|mjs|cjs|vue|svelte'
 AUDIT_UI_EXT='tsx|jsx|vue|svelte'
-AUDIT_EXCLUDE='(__tests__/|__mocks__/|\.(test|spec|stories|d)\.|/node_modules/|/dist/|/build/)'
+AUDIT_EXCLUDE='(/__[A-Za-z]+__/|^__[A-Za-z]+__/|\.(test|test-d|spec|stories|d)\.|/node_modules/|/dist/|/build/)'
 [[ -f .audit-code/config.env ]] && source .audit-code/config.env
 
 BASE=""; OUT="/tmp/audit-code"; DRY=no; SCOPE=()
@@ -95,8 +95,26 @@ if [[ "$MODE" == codebase ]] || (( n_files > AUDIT_REVIEWER_FILES || n_lines > A
 chunks=1; rm -rf "$OUT/chunks"
 if [[ "$MODE" == codebase ]] && (( n_files > AUDIT_CODEBASE_MAX_FILES )); then
   mkdir -p "$OUT/chunks"
-  awk -F/ '{ key = (NF > 2) ? $1 "/" $2 : $1; print key "\t" $0 }' "$CODE" | sort | awk -F'\t' -v dir="$OUT/chunks" -v cap="$AUDIT_CODEBASE_MAX_FILES" '
-    { if ($1 != key || n >= cap) { key = $1; c++; n = 0; file = sprintf("%s/%02d.txt", dir, c) } print $2 >> file; n++ }'
+  python3 - "$CODE" "$OUT/chunks" "$AUDIT_CODEBASE_MAX_FILES" <<'CHUNKPY'
+import math, os, sys
+from collections import OrderedDict
+files = [l.strip() for l in open(sys.argv[1]) if l.strip()]
+out, cap = sys.argv[2], int(sys.argv[3])
+groups = OrderedDict()
+for f in sorted(files):
+    groups.setdefault(os.path.dirname(f) or ".", []).append(f)
+target = math.ceil(len(files) / math.ceil(len(files) / cap))
+chunks, cur = [], []
+for fs in groups.values():
+    if cur and len(cur) + len(fs) > target:
+        chunks.append(cur); cur = []
+    while len(fs) > target:
+        chunks.append(fs[:target]); fs = fs[target:]
+    cur += fs
+if cur: chunks.append(cur)
+for i, c in enumerate(chunks, 1):
+    with open(os.path.join(out, f"{i:02d}.txt"), "w") as fh: fh.write("\n".join(c) + "\n")
+CHUNKPY
   chunks=$(ls "$OUT/chunks" | wc -l | tr -d ' ')
 fi
 
@@ -149,7 +167,7 @@ if (( n_ui > 0 )) && (( ${UTILITIES:-0} > 0 )); then want "10 arbitrary var(--)"
 
 {
   echo "$BASE_LABEL · **Files:** $n_files · **Added lines:** $n_lines · **Surface:** $surface"
-  echo "files: $n_files · added lines: $n_lines · surface: $surface · lenses: $lenses · reviewers: $reviewers (threshold $AUDIT_REVIEWER_FILES code files or $AUDIT_REVIEWER_LINES added code lines)$( (( chunks > 1 )) && echo " · chunks: $chunks (one reviewer round each, $OUT/chunks/)")"
+  echo "files: $n_files · added lines: $n_lines · surface: $surface · lenses: $lenses · reviewers: $reviewers (threshold $AUDIT_REVIEWER_FILES code files or $AUDIT_REVIEWER_LINES added code lines)$( (( chunks > 1 )) && echo " · chunks: $chunks (structure and types-and-state once per chunk, styling-and-i18n once over ui_files.txt; $OUT/chunks/)")"
 } > "$HEADER"
 
 if [[ $DRY == yes ]]; then

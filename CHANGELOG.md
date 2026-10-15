@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.5 — 2026-10-14
+
+First codebase-mode run with agents (react-hook-form `src/`, 112 files):
+
+- Chunks are balanced and keep folders together (`ceil(files / cap)` chunks). Before, every folder became its own chunk: 130 files gave 5 chunks and would have dispatched 15 reviewers.
+- `styling-and-i18n` runs once over `ui_files.txt`; only `structure` and `types-and-state` run per chunk.
+- Default exclusions cover every `__name__/` folder (`__tests__`, `__mocks__`, `__typetest__`, `__fixtures__`) and `*.test-d.*`.
+
 ## 1.0.4 — 2026-10-14
 
 From the TanStack Query run:

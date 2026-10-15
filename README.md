@@ -169,6 +169,15 @@ python3 tests/validate-skill.py
 
 CI runs both plus `shellcheck` on every push. Runs on public repos are written up in `docs/runs/`.
 
+Releasing: every change to the skill's behaviour bumps `metadata.version` in `SKILL.md` and `version` in `.claude-plugin/plugin.json`, adds a `CHANGELOG.md` entry, and gets a `vX.Y.Z` tag and a GitHub release. `npx skills add` always installs the default branch; existing installs pick changes up with `npx skills update audit-code`, and Claude Code plugin installs see the new `version`.
+
+## Update
+
+```bash
+npx skills update audit-code        # skills.sh CLI
+/plugin update audit-code           # Claude Code plugin
+```
+
 ## License
 
 MIT © Nandi Legorreta

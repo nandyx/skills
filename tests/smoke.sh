@@ -19,7 +19,11 @@ cat > tsconfig.json <<'T'
 { "compilerOptions": { "baseUrl": ".", "paths": { "@app/*": ["src/*"] }, "jsx": "react-jsx", "strict": true } }
 T
 cat > package.json <<'T'
-{ "name": "fixture", "private": true, "dependencies": { "react": "^19.0.0" } }
+{ "name": "fixture", "private": true, "scripts": { "lint": "node -e \"process.exit(0)\"" }, "dependencies": { "react": "^19.0.0" } }
+T
+cat > CONTRIBUTING.md <<'T'
+# Contributing
+Pull request descriptions must be written by a human, in your own voice.
 T
 cat > CLAUDE.md <<'T'
 # Fixture rules
@@ -92,6 +96,7 @@ check "aliases detected"      "grep -q 'ALIASES=1' $OUT/rules-pack.env"
 check "tailwind detected"     "grep -q 'TAILWIND=yes' $OUT/rules-pack.env"
 check "utility detected"      "grep -q 'UTILITIES=1' $OUT/rules-pack.env"
 check "CLAUDE.md listed"      "grep -q '^- CLAUDE.md' $OUT/rules-pack.md"
+check "contribution policy"   "grep -q 'written by a human' $OUT/rules-pack.md"
 
 echo "== dry run"
 dry=$("$S/audit-sweeps.sh" --out "$OUT" --dry-run)
@@ -116,6 +121,15 @@ check "P3 project sweep ran"  "grep -q 'Sweeps: [0-9]*/15' $OUT/header.txt"
 if [[ "${SMOKE_OFFLINE:-0}" != 1 ]]; then
   check "S2 jscpd clone"      "grep -q '^| S2-1 .*clone of' $C"
   check "S3 madge cycle"      "grep -q '^| S3-1 .*cycle' $C"
+fi
+echo "== apply-check and dts-diff"
+ac=$("$S/apply-check.sh"); echo "$ac" | sed 's/^/    /'
+check "apply-check runs lint" "echo \"\$ac\" | grep -q '| \`lint\` | 0 |'"
+if [[ "${SMOKE_OFFLINE:-0}" != 1 ]]; then
+  dd=$("$S/dts-diff.sh" --base main --out "$OUT/dts"); echo "$dd" | sed 's/^/    /'
+  check "dts-diff sees the new hook" "echo \"\$dd\" | grep -q 'useList.d.ts (added)'"
+  dd2=$("$S/dts-diff.sh" --base HEAD --out "$OUT/dts")
+  check "dts-diff identical on HEAD" "echo \"\$dd2\" | grep -q '^d.ts: identical'"
 fi
 check "summary counts"        "\"$S/audit-summary.sh\" --out $OUT | grep -q 'Candidates: [1-9]'"
 

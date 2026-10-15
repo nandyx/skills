@@ -58,6 +58,8 @@ tw_config=$(find . -maxdepth 4 -name "tailwind.config.*" "${prune[@]}" 2>/dev/nu
 tailwind=no
 if [[ -n "$tw_config" ]] || grep -rqlE '^@import ["'"'"']tailwindcss|^@tailwind ' --include=*.css . 2>/dev/null; then tailwind=yes; fi
 
+policy_docs=$(for d in $docs AI_POLICY.md CONTRIBUTING.md .github/CONTRIBUTING.md .github/pull_request_template.md .github/PULL_REQUEST_TEMPLATE.md; do [[ -f "$d" ]] && echo "$d"; done | sort -u)
+policy_lines=$(for d in $policy_docs; do grep -nEi "(pull request|PR) descriptions?|own (voice|words)|written by a human|not allowed to (write|create)|AI[- ](assisted|generated|policy)|automated agent|LLM|Signed-off-by|verified commit|signed commits|changeset" "$d" | sed "s#^#$d:#"; done | head -20)
 rule_lines=$(for d in $docs; do grep -nEi "never|forbidden|banned|deprecated|must not|only through|do not|don't" "$d" | sed "s#^#$d:#"; done | head -60)
 
 {
@@ -97,6 +99,10 @@ rule_lines=$(for d in $docs; do grep -nEi "never|forbidden|banned|deprecated|mus
   echo "## Token registry"
   echo "- tailwind: $tailwind${tw_config:+ ($tw_config)}"
   echo "- @utility names: $n_util${utilities:+ ($(echo "$utilities" | head -8 | paste -sd', ' -)…)}"
+  echo
+  echo "## Contribution policy"
+  echo "What the project says about PRs, descriptions, AI-assisted work and commits. Step 7 reads it before opening anything; a line saying descriptions must be written by a human means the run writes technical notes, never the description."
+  if [[ -n "$policy_lines" ]]; then echo "$policy_lines" | sed 's/^/    /' | cut -c1-220; else echo "    not defined"; fi
   echo
   echo "## Deprecated or banned APIs"
   echo "SESSION — the list from the normative docs, or not defined"

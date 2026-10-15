@@ -69,7 +69,7 @@ Requirements: git, bash, python3, Node 18+. `jscpd` and `madge` run through `npx
 /audit-code --scope src/billing # one folder, from any branch
 /audit-code --base v2.3.0       # a range already merged
 /audit-code --dry-run           # what would run, who would review, nothing executed
-/audit-code --apply A           # after the report: apply the mechanical rows, one commit each, re-checked
+/audit-code --apply A           # after the report: one branch per topic, one commit per row, the project's own checks + .d.ts comparison, notes ready for a PR
 ```
 
 The skill is read-only unless you say `--apply A`. Classes `B` (structural) and `C` (cross-package) are never applied by it.
@@ -96,7 +96,8 @@ rules-pack.sh ─┐
 2. **Sweeps.** One command runs them all and prints how many ran. A skipped sweep is visible in the header with its reason.
 3. **Reviewers.** Above the size threshold, one fresh-context agent per lens reads every file in full and proposes candidates. Below it, the sweeps alone feed the verifier: whoever finds does not certify.
 4. **Verifier.** Always. Adversarial by design: it runs the mandatory counter-check for each candidate's kind, `git show <base>:<path>` for anything claimed new, and writes `survives`, `discarded — <reason>` or `out-of-scope — behaviour`.
-5. **Report.** Findings by risk class (`A` mechanical, `B` structural, `C` cross-package), the riskiest named and last, plus three tables that are mandatory even when empty: **Out of scope — behaviour**, **False positives discarded**, **Verified facts**.
+5. **Report.** Findings by risk class (`A` mechanical, `B` structural, `C` cross-package), the riskiest named and last, a **Why these matter** line per kind of finding (why a redundant `as` is worth a commit, not just that it is redundant), plus three tables that are mandatory even when empty: **Out of scope — behaviour**, **False positives discarded**, **Verified facts**.
+6. **Apply (`--apply A`, on request).** Class `A` rows grouped by topic, one branch per topic and one commit per row, then the project's own `type` / `test:type` / `lint` / `test` scripts (`apply-check.sh`) and, for published packages, a before/after comparison of the emitted `.d.ts` (`dts-diff.sh`). It writes PR-ready notes per branch and respects the project's contribution policy (when descriptions must be written by a human, it writes technical notes instead). It never pushes or opens a PR.
 
 ## What it never does
 
@@ -105,6 +106,7 @@ rules-pack.sh ─┐
 - Blame a branch for debt it only moved. Rows on lines the branch did not add are marked `pre-existing on base` and discarded unless you pass `--include-pre-existing`.
 - Let an agent count. `audit-summary.sh` counts the rows.
 - Install anything into your project, start a server, or edit code outside `--apply A`.
+- Push, fork or open a PR. `--apply A` leaves local branches and notes; you decide what goes upstream.
 
 ## Supported projects
 

@@ -21,6 +21,7 @@ No candidate is reported without its counter-check. The first pass of an audit f
 | Alias-able import | resolve the relative path and the alias against the workspace's `tsconfig.json` `paths`; both must land on the same file, and the alias must be one the bundler config (metro, vite, webpack, jest `moduleNameMapper`) also knows |
 | DS wrapper bypass | the wrapper (`rules-pack.md`) must export the same symbol — grep its barrel; a symbol the wrapper does not re-export is a wrapper gap, reported with `Apply: no` |
 | Architecture or boundary rule | quote the rule's line from the normative doc; a rule nobody wrote down is a preference, and the candidate is discarded |
+| Any change inside a published package (a `package.json` with a `name` and no `"private": true`) that touches a type, a signature or an export | `scripts/dts-diff.sh --base <base or HEAD> --tree <scratch copy>` → `identical`; when files differ, each one must be unreachable from the package's `exports` map, otherwise `Apply: no — public types change` |
 | Several components in one file | count with sweep 8's regex **and** read the file: a second component close to the parent's size is a hit, a five-line private helper is not |
 
 Every finding carries an **Evidence** line with the command and its result. No evidence, no report.

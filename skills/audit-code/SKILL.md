@@ -5,7 +5,7 @@ license: MIT
 compatibility: Requires git, bash, python3 and Node 18+ (npx runs jscpd and madge ad hoc). Sub-agents are used when the runtime has them; an inline fallback is documented.
 metadata:
   author: Nandi Legorreta
-  version: "1.0.6"
+  version: "1.0.7"
   repository: https://github.com/nandyx/skills
 ---
 
@@ -37,7 +37,7 @@ Paths below are relative to this skill's directory (`scripts/`, `references/`). 
 | `--no-ask` | Step 5 asks nothing; rows carry `Apply` and the caller decides |
 | `--dry-run` | prints mode, files, lines, surface, who would review and which sweeps would run or skip, without running anything |
 | `--init [frontend\|backend\|both]` | creates `.audit-code/` (thresholds, normative docs, register, starter project sweeps) and stops |
-| `--apply A` | after the report, applies the surviving class `A` rows, one commit per row, re-running each row's counter-check |
+| `--apply A` | after the report, applies the surviving class `A` rows grouped by topic: one branch per topic, one commit per row, the project's own checks and the `.d.ts` comparison run, and a PR-ready notes file per branch |
 | `--include-pre-existing` | branch mode: rows on lines the branch did not add stay in the verifier's queue instead of being discarded on sight |
 
 Everything the lead and the agents exchange lives under one working directory, recreated every run: `rm -rf /tmp/audit-code && mkdir -p /tmp/audit-code`.
@@ -146,6 +146,9 @@ Reviewers: 3 agents + verifier · Candidates: 23 · Survive: 4 · Discarded: 17 
 
 **Riskiest:** <id> — <why>. It goes last in the order.
 
+## Why these matter
+- **<kind>** — <the line from references/why.md>
+
 ## Out of scope — behaviour
 ## Already planned
 ## False positives discarded
@@ -154,8 +157,20 @@ Reviewers: 3 agents + verifier · Candidates: 23 · Survive: 4 · Discarded: 17 
 | claim | how it was checked | result |
 ```
 
+Under `## Why these matter`, one line per kind of finding present in the Findings table, copied from `references/why.md` — the reader who never ran the audit learns why each row is worth a commit.
+
 Close with the verification the user will run: the gates per block, the final greps with their expected counts, and the visual pass that proves zero delta when UI files are involved.
 
 ## Step 7 — `--apply A` (only when asked)
 
-For each surviving class `A` row, in report order: make the edit exactly as the `Change` says, re-run the row's counter-check and the project's type-check or test command when one is declared in the normative docs, and commit with `refactor: <id> <change>`. A row whose re-check fails is reverted and moved to `Apply: no — re-check failed: <output>`. B and C are never applied by this skill.
+1. **Group by topic.** Take the surviving class `A` rows and group them by kind of finding (the `Kind` names of `references/why.md`: redundant type assertions, dead exports, memo without consumer…). One topic is one reviewable change; a project that asks for one topic per PR gets exactly that. Rows that reshape code instead of deleting or narrowing it (a cast moved into a type guard, a variable bound once) are their own topic.
+2. **One branch per topic**, from the base: `audit/<topic-slug>`. For each row in report order: make the edit exactly as the `Change` says, run the project's formatter on the touched files, re-run the row's counter-check, and commit with the project's commit convention (read `git log --oneline -20` on the base) or `refactor: <change>` when it has none. A row whose re-check fails is reverted and moved to `Apply: no — re-check failed: <output>`.
+3. **Gates, on the branch:**
+   ```bash
+   scripts/apply-check.sh                         # the project's own type, type-test, lint and test scripts
+   scripts/dts-diff.sh --base <base>              # published packages: declarations identical, or every differing file internal
+   ```
+   A failing gate stops the topic: find the row that broke it (revert rows from the last one until the gate passes), mark it `Apply: no`, and re-run.
+4. **Notes per branch**, to `/tmp/audit-code/pr-<topic>.md`: what changed and why (the `why.md` line), the rows with one line each, the gate table from `apply-check.sh`, the `dts-diff.sh` line, and what was left out of the topic. Read `## Contribution policy` in the rules pack first: when the project says PR descriptions must be written by a human, title the file «Technical notes for your description», never a description, and tell the user so. Never push, fork or open a PR: the user decides.
+
+B and C rows are never applied by this skill.

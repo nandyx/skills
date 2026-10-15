@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.0.7 — 2026-10-14
+
+What the react-hook-form PR showed the skill should do itself:
+
+- **Why these matter.** The report carries one line per kind of finding, from `references/why.md` (for example: a redundant `as` switches the compiler off at that point and hides the error if the type changes later).
+- **`--apply A` by topic.** Class `A` rows are grouped by kind into one branch each, one commit per row in the project's commit convention, and a `pr-<topic>.md` notes file per branch. Reshaping rows are their own topic. It never pushes or opens a PR.
+- **`scripts/apply-check.sh`.** Runs the project's own `type` / `test:type` / `lint` / `test` scripts (or `AUDIT_CHECKS`) with the project's package manager and prints the gate table.
+- **`scripts/dts-diff.sh`.** Emits the type declarations of the base (via `git archive`, nothing written to the repo) and of the tree, and compares them file by file. New mandatory counter-check for changes inside published packages; the verifier runs it on its scratch copy.
+- **Contribution policy in the rules pack.** Lines about PR descriptions, AI-assisted work, signed commits and changesets are collected; when a project requires human-written descriptions (next.js, TanStack Query), `--apply A` writes technical notes, never a description.
+
 ## 1.0.6 — 2026-10-14
 
 From the react-hook-form codebase run (211 candidates → 32 survivors, draft PR react-hook-form/react-hook-form#13871):

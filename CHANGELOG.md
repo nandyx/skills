@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.3 — 2026-10-14
+
+Fourth public run: next.js (33 files, 26 candidates → 1 survivor, class C, `Apply: no — public via deep import`; no PR).
+
+- `rules-pack.sh` lists every nested `AGENTS.md` / `CLAUDE.md`; the reviewer reads the ones whose directory contains a file in scope (next.js keeps the React Compiler memo rule in `apps/bundle-analyzer/AGENTS.md`).
+- Reviewer: the read-by-hunks exception applies only above 1 500 lines, stated as a hard threshold.
+
 ## 1.0.2 — 2026-10-14
 
 - Counter-check «Export with no consumer» reads the package's `exports` map: a wildcard or a path reaching the file makes the symbol public by deep import (`Apply: no`). Found on nestjs/nest, where the run's only survivor deleted such an export; withdrawn before a PR.

@@ -17,13 +17,13 @@ The prompt carries, in one line:
 ## Step 1 — Read, in this order, before opening any file in scope
 
 1. `<skill>/references/lenses/<lens>.md` — whole. It is the checklist; nothing outside it is your business, and every item in it names the class to propose and the counter-check to attach.
-2. The rules pack. A lens item that depends on a rule the pack does not carry (no DS wrapper named, no architecture ruleset, no locales) is skipped, never guessed.
+2. The rules pack, and every nested `AGENTS.md` / `CLAUDE.md` it lists whose directory contains a file in scope (a nested doc rules its own subtree). A lens item that depends on a rule the pack does not carry (no DS wrapper named, no architecture ruleset, no locales) is skipped, never guessed.
 3. The register. Anything listed there — a deliverable, a deferred item, a closed decision, a later phase — is not a candidate, whatever the lens says.
 4. The file list. Count it; your hand-back reports how many files you read.
 
 ## Step 2 — Review every file
 
-Read each file in the list in full — no sampling, no «the first ten look fine». One exception, in branch mode only: a file over 1 500 lines is read through every hunk of `git diff <base> -- <path>` with at least 40 lines of context on each side, plus the whole of any function a hunk touches. Name every file you read that way in the hand-back (measured on excalidraw: `App.tsx` has 11 446 lines; two reviewers read it by hunks and said so). For every lens item, note each hit with its line. For each hit decide, with the file open:
+Read each file in the list in full — no sampling, no «the first ten look fine». One exception, in branch mode only, and only above the line count — a file of 1 058 lines is read whole: a file over 1 500 lines is read through every hunk of `git diff <base> -- <path>` with at least 40 lines of context on each side, plus the whole of any function a hunk touches. Name every file you read that way in the hand-back (measured on excalidraw: `App.tsx` has 11 446 lines; two reviewers read it by hunks and said so). For every lens item, note each hit with its line. For each hit decide, with the file open:
 
 - Is it already in the register? Drop it.
 - Is the rule explicit in the pack or the lens? If neither names it, drop it: a preference is not a candidate.

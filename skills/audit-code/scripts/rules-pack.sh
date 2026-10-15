@@ -23,6 +23,7 @@ docs=$( {
   for d in CLAUDE.md AGENTS.md; do [[ -f "$d" ]] && grep -oE '(docs|doc|\.github|\.claude|\.cursor)/[A-Za-z0-9_./-]+\.mdc?' "$d"; done
   [[ -f .audit-code/rules.md ]] && grep -oE '^[-*] *`?[A-Za-z0-9_./-]+\.mdc?' .audit-code/rules.md | sed -E 's/^[-*] *`?//'
 } | sort -u | while read -r d; do [[ -f "$d" ]] && echo "$d"; done )
+nested=$(find . -mindepth 2 -maxdepth 5 \( -name AGENTS.md -o -name CLAUDE.md \) "${prune[@]}" -not -path '*/examples/*' -not -path '*/test/*' -not -path '*/tests/*' -not -path '*/fixtures/*' 2>/dev/null | sed 's#^\./##' | sort)
 
 aliases=$(find . -maxdepth 4 -name "tsconfig*.json" "${prune[@]}" 2>/dev/null | sort | while read -r t; do
   python3 - "$t" <<'PY' 2>/dev/null
@@ -64,6 +65,11 @@ rule_lines=$(for d in $docs; do grep -nEi "never|forbidden|banned|deprecated|mus
   echo
   echo "## Normative docs read"
   if [[ -n "$docs" ]]; then echo "$docs" | sed 's/^/- /'; else echo "not defined (no CLAUDE.md, AGENTS.md or .audit-code/rules.md)"; fi
+  if [[ -n "$nested" ]]; then
+    echo
+    echo "Nested agent docs — each applies to the files under its own directory; read the ones whose directory contains a file in scope:"
+    echo "$nested" | sed 's/^/- /'
+  fi
   echo
   echo "## Alias registry"
   if [[ -n "$aliases" ]]; then echo "$aliases"; else echo "not defined"; fi
@@ -106,4 +112,4 @@ rule_lines=$(for d in $docs; do grep -nEi "never|forbidden|banned|deprecated|mus
   echo "I18N_HOOK='${i18n_hook%% *}'"
 } > "$ENV"
 
-echo "rules-pack: docs $(echo "$docs" | grep -c .) · aliases $n_aliases · DS ${ds_canonical:-none} → ${ds_wrapper:-none} · tailwind $tailwind · utilities $n_util · locales $(echo "$locales" | tr ',' '\n' | grep -c .) · SESSION sections: 6 → $MD"
+echo "rules-pack: docs $(echo "$docs" | grep -c .) · nested $(echo "$nested" | grep -c .) · aliases $n_aliases · DS ${ds_canonical:-none} → ${ds_wrapper:-none} · tailwind $tailwind · utilities $n_util · locales $(echo "$locales" | tr ',' '\n' | grep -c .) · SESSION sections: 6 → $MD"
